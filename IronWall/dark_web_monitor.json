@@ -1,0 +1,16 @@
+{
+  "enabled": false,
+  "monitored_emails": [
+    "admin@example.com",
+    "user@example.com"
+  ],
+  "monitored_domains": [
+    "example.com",
+    "company.com"
+  ],
+  "breach_notifications": [],
+  "scan_frequency_hours": 24,
+  "auto_notify": true,
+  "include_passwords": false,
+  "alert_on_new_breach": true
+}

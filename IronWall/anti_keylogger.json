@@ -1,0 +1,39 @@
+{
+  "enabled": false,
+  "suspicious_processes": [
+    "ahk.exe",
+    "autohotkey.exe",
+    "macro.exe",
+    "keylogger.exe",
+    "spy.exe",
+    "monitor.exe",
+    "track.exe",
+    "record.exe",
+    "capture.exe",
+    "log.exe",
+    "hook.exe",
+    "inject.exe"
+  ],
+  "keylogger_signatures": [
+    "SetWindowsHookEx",
+    "GetAsyncKeyState",
+    "GetKeyState",
+    "keybd_event",
+    "SendInput",
+    "PostMessage",
+    "SendMessage",
+    "WH_KEYBOARD",
+    "WH_KEYBOARD_LL",
+    "WM_KEYDOWN",
+    "WM_KEYUP",
+    "VK_SHIFT",
+    "VK_CONTROL",
+    "VK_ALT",
+    "VK_TAB"
+  ],
+  "encrypted_input": false,
+  "virtual_keyboard_enabled": false,
+  "detection_sensitivity": "Medium",
+  "auto_block": true,
+  "alert_on_detection": true
+}

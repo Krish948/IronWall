@@ -1,0 +1,82 @@
+{
+  "protection": {
+    "real_time_protection": true,
+    "firewall_protection": true,
+    "usb_protection": true,
+    "heuristic_scanning": "Medium",
+    "safe_browsing": true,
+    "webcam_microphone_control": true
+  },
+  "scanning": {
+    "default_scan_type": "Quick",
+    "scan_compressed_files": true,
+    "scan_startup_programs": true,
+    "exclusions": {
+      "files": [],
+      "folders": [],
+      "extensions": []
+    }
+  },
+  "scheduling": {
+    "enable_scheduled_scans": false,
+    "scan_frequency": "Weekly",
+    "scan_time": "02:00",
+    "auto_delete_threats": true
+  },
+  "notifications": {
+    "threat_alerts": true,
+    "scan_results_summary": true,
+    "silent_mode": false,
+    "notification_sound": true
+  },
+  "updates": {
+    "auto_update_definitions": true,
+    "auto_update_app": true,
+    "cloud_threat_detection": true
+  },
+  "performance": {
+    "cpu_usage_limit": 50,
+    "ram_optimization": true,
+    "background_scan": true,
+    "idle_scan_mode": true,
+    "battery_saver_mode": false
+  },
+  "quarantine": {
+    "auto_delete_after_days": 30,
+    "quarantine_folder": "quarantine",
+    "max_quarantine_size_mb": 1000,
+    "enable_file_submission": false
+  },
+  "privacy": {
+    "data_sharing": false,
+    "log_retention_days": 30,
+    "auto_log_clearing": true,
+    "block_telemetry": true
+  },
+  "appearance": {
+    "theme": "light",
+    "ttkbootstrap_theme": "flatly",
+    "font_size": "normal",
+    "high_contrast": false,
+    "animations": true,
+    "language": "en",
+    "color_theme": "Light",
+    "custom_colors": {
+      "primary_accent": "#1976D2",
+      "secondary_accent": "#42A5F5",
+      "background": "#F7F9FB",
+      "surface": "#FFFFFF",
+      "text_primary": "#222B45",
+      "text_secondary": "#6B778C",
+      "border": "#D1D9E6"
+    },
+    "sync_with_system": false,
+    "use_custom_colors": false
+  },
+  "advanced": {
+    "admin_lock_enabled": false,
+    "admin_password": "",
+    "diagnostic_reporting": true,
+    "debug_mode": false
+  }
+}
