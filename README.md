@@ -1,4 +1,4 @@
-# IronWall Project - All Documentation (Merged)
+# IronWall Project
 
 ---
 
@@ -271,9 +271,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Support
 
-- **Documentation**: [Wiki](https://github.com/yourusername/IronWall/wiki)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/IronWall/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/IronWall/discussions)
+- **Documentation**: [Wiki](https://github.com/krish948/IronWall/wiki)
+- **Issues**: [GitHub Issues](https://github.com/krish948/IronWall/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/krish948/IronWall/discussions)
 
 ## ⚠️ Disclaimer
 
