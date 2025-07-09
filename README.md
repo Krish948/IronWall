@@ -20,7 +20,6 @@ A comprehensive, modular antivirus solution with advanced threat detection, beha
 ### 🔐 Core Security
 - **Real-time threat detection** with process monitoring
 - **Multiple scan types**: Quick, Full, Deep, and Custom scans
-- **Ransomware and spyware detection** with behavioral analysis
 - **Heuristic + signature-based scanning** for comprehensive protection
 - **Advanced malware detection** with pattern recognition
 
