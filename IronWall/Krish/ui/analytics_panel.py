@@ -41,23 +41,39 @@ class AnalyticsPanel(ttk.Frame):
         self._data_cache = {}  # Cache for data to prevent repeated loading
         self._cache_timestamp = 0
         self.pack(fill='both', expand=True)
-        
+
+        # --- Scrollable Frame Setup ---
+        self.canvas = tk.Canvas(self, borderwidth=0, highlightthickness=0, bg='#23272f')
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas)
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
+        self.scrollable_frame.update_idletasks()
+        self.bind_all("<MouseWheel>", self._on_mousewheel)
         # Show loading screen first
         self._show_loading_screen()
-        
         # Start async loading
         self._load_async()
+
+    def _on_mousewheel(self, event):
+        # For Windows and MacOS
+        if event.widget.winfo_toplevel() == self.winfo_toplevel():
+            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
     def _show_loading_screen(self):
         """Show a loading screen while data is being prepared"""
         colors = self._get_colors()
-        
-        # Clear any existing widgets
-        for widget in self.winfo_children():
+        # Clear any existing widgets in scrollable_frame
+        for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
-        
         # Create loading frame
-        loading_frame = ttk.Frame(self)
+        loading_frame = ttk.Frame(self.scrollable_frame)
         loading_frame.pack(expand=True, fill='both')
         
         # Loading icon and text
@@ -121,12 +137,12 @@ class AnalyticsPanel(ttk.Frame):
         """Show error screen if loading fails"""
         colors = self._get_colors()
         
-        # Clear loading widgets
-        for widget in self.winfo_children():
+        # Clear loading widgets in scrollable_frame
+        for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
         
         # Error frame
-        error_frame = ttk.Frame(self)
+        error_frame = ttk.Frame(self.scrollable_frame)
         error_frame.pack(expand=True, fill='both')
         
         # Error icon and text
@@ -183,11 +199,11 @@ class AnalyticsPanel(ttk.Frame):
         """Create the main analytics widgets"""
         try:
             colors = self._get_colors()
-            # Clear loading widgets
-            for widget in self.winfo_children():
+            # Clear loading widgets in scrollable_frame
+            for widget in self.scrollable_frame.winfo_children():
                 widget.destroy()
             # Header
-            header_frame = ttk.Frame(self, style='TFrame')
+            header_frame = ttk.Frame(self.scrollable_frame, style='TFrame')
             header_frame.pack(fill='x', pady=(10, 0))
             icon = ttk.Label(header_frame, text='📊', font=('Segoe UI Emoji', 32), background=colors['bg'], foreground=colors['accent'])
             icon.pack(side='left', padx=(20, 10))
@@ -200,7 +216,7 @@ class AnalyticsPanel(ttk.Frame):
             settings_btn.pack(side='right', padx=20)
             Tooltip(settings_btn, 'Analytics Settings')
             # Main notebook
-            self.notebook = ttk.Notebook(self)
+            self.notebook = ttk.Notebook(self.scrollable_frame)
             self.notebook.pack(fill='both', expand=True, padx=30, pady=20)
             # Create tabs asynchronously
             print('[DEBUG] Creating analytics tabs...')
@@ -296,8 +312,8 @@ class AnalyticsPanel(ttk.Frame):
             # Clear cache to force fresh data
             self._data_cache.clear()
             
-            # Clear existing widgets
-            for widget in self.winfo_children():
+            # Clear existing widgets in scrollable_frame
+            for widget in self.scrollable_frame.winfo_children():
                 widget.destroy()
             
             # Recreate widgets

@@ -16,7 +16,6 @@ import threading
 from core.scanner import IronWallScanner
 from core.ai_engine import AIBehavioralEngine
 from core.process_monitor import ProcessMonitor
-from core.sandbox import SandboxExecution
 from core.cloud_intelligence import CloudThreatIntelligence
 from core.network_protection import NetworkProtection
 from core.ransomware_shield import RansomwareShield
@@ -34,7 +33,6 @@ class IronWallCLI:
         self.scanner = IronWallScanner(self.threat_db)
         self.ai_engine = AIBehavioralEngine()
         self.process_monitor = ProcessMonitor(self.threat_db)
-        self.sandbox = SandboxExecution()
         self.cloud_intel = CloudThreatIntelligence()
         self.network_protection = NetworkProtection()
         self.ransomware_shield = RansomwareShield()
@@ -58,7 +56,6 @@ Examples:
   ironwall scan /path/to/scan
   ironwall scan --deep --ai
   ironwall process-monitor --list
-  ironwall sandbox /path/to/file
   ironwall cloud-check /path/to/file
   ironwall network --block-ip 192.168.1.100
   ironwall ransomware --stats
@@ -81,7 +78,6 @@ Examples:
         scan_parser.add_argument('--deep', action='store_true', help='Enable deep scanning')
         scan_parser.add_argument('--ai', action='store_true', help='Enable AI analysis')
         scan_parser.add_argument('--cloud', action='store_true', help='Enable cloud intelligence')
-        scan_parser.add_argument('--sandbox', action='store_true', help='Enable sandbox analysis')
         scan_parser.add_argument('--output', help='Output file for results')
         
         # Process monitor command
@@ -91,13 +87,6 @@ Examples:
         proc_parser.add_argument('--kill', type=int, help='Kill process by PID')
         proc_parser.add_argument('--block', type=int, help='Block process by PID')
         proc_parser.add_argument('--stats', action='store_true', help='Show monitoring statistics')
-        
-        # Sandbox command
-        sandbox_parser = subparsers.add_parser('sandbox', help='Sandbox analysis')
-        sandbox_parser.add_argument('file', help='File to analyze in sandbox')
-        sandbox_parser.add_argument('--timeout', type=int, default=30, help='Execution timeout in seconds')
-        sandbox_parser.add_argument('--list', action='store_true', help='List sandbox sessions')
-        sandbox_parser.add_argument('--cleanup', action='store_true', help='Clean up all sessions')
         
         # Cloud intelligence command
         cloud_parser = subparsers.add_parser('cloud-check', help='Cloud threat intelligence')
@@ -206,8 +195,6 @@ Examples:
                 self.cmd_scan(parsed_args)
             elif parsed_args.command == 'process-monitor':
                 self.cmd_process_monitor(parsed_args)
-            elif parsed_args.command == 'sandbox':
-                self.cmd_sandbox(parsed_args)
             elif parsed_args.command == 'cloud-check':
                 self.cmd_cloud_check(parsed_args)
             elif parsed_args.command == 'network':
@@ -268,8 +255,7 @@ Examples:
         scan_options = {
             'deep_scan': args.deep,
             'ai_analysis': args.ai,
-            'cloud_check': args.cloud,
-            'sandbox_analysis': args.sandbox
+            'cloud_check': args.cloud
         }
         
         # Perform scan
@@ -292,7 +278,6 @@ Examples:
             'threats_found': [],
             'ai_analysis': [],
             'cloud_results': [],
-            'sandbox_results': []
         }
         
         # Basic file scan
@@ -325,12 +310,6 @@ Examples:
                 cloud_result = self.cloud_intel.check_file_hash(self._get_file_hash(path))
                 results['cloud_results'].append(cloud_result)
         
-        # Sandbox analysis
-        if options['sandbox_analysis'] and os.path.isfile(path):
-            session_id = self.sandbox.create_sandbox_session(path)
-            sandbox_result = self.sandbox.execute_in_sandbox(session_id)
-            results['sandbox_results'].append(sandbox_result)
-        
         return results
     
     def _get_file_hash(self, file_path: str) -> str:
@@ -358,26 +337,6 @@ Examples:
             self.output_result(stats)
         else:
             print("Use --list, --suspicious, --kill, --block, or --stats")
-    
-    def cmd_sandbox(self, args):
-        """Handle sandbox command"""
-        if args.list:
-            sessions = self.sandbox.get_all_sessions()
-            self.output_result(sessions)
-        elif args.cleanup:
-            self.sandbox.cleanup_all_sessions()
-            print("All sandbox sessions cleaned up")
-        elif args.file:
-            if not os.path.exists(args.file):
-                print(f"Error: File {args.file} does not exist")
-                return
-            
-            print(f"Creating sandbox session for {args.file}...")
-            session_id = self.sandbox.create_sandbox_session(args.file)
-            result = self.sandbox.execute_in_sandbox(session_id)
-            self.output_result(result)
-        else:
-            print("Use --list, --cleanup, or provide a file path")
     
     def cmd_cloud_check(self, args):
         """Handle cloud check command"""
@@ -661,7 +620,6 @@ Examples:
                 'scanner': self.scanner.get_scan_stats(),
                 'ai_engine': self.ai_engine.get_model_info(),
                 'process_monitor': self.process_monitor.get_process_stats(),
-                'sandbox': self.sandbox.get_sandbox_stats(),
                 'cloud_intelligence': self.cloud_intel.get_cache_stats(),
                 'network_protection': self.network_protection.get_network_stats(),
                 'ransomware_shield': self.ransomware_shield.get_protection_stats(),

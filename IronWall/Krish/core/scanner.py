@@ -280,6 +280,8 @@ class IronWallScanner:
             with ProcessPoolExecutor(max_workers=max_workers) as executor:
                 futures = [executor.submit(batch_scan_worker, batch, deep_scan_enabled) for batch in batches]
                 files_scanned = 0
+                buffer = []
+                BUFFER_SIZE = 50
                 for idx, future in enumerate(as_completed(futures)):
                     if self.stop_scanning:
                         for f in futures:
@@ -290,20 +292,24 @@ class IronWallScanner:
                         for res in batch_results:
                             if len(res) == 7 and res[1] is not None:
                                 file_name, full_path, file_size, file_ext, md5_hash, t0, t1 = res
-                                # Call result_callback for every file for accurate progress tracking
                                 files_scanned += 1
-                                if result_callback:
-                                    result_callback(file_name, full_path, file_size, file_ext, None, md5_hash, None, 'Scanned', 'Clean')
-                                # Profiling
+                                buffer.append((file_name, full_path, file_size, file_ext, None, md5_hash, None, 'Scanned', 'Clean'))
+                                if len(buffer) >= BUFFER_SIZE:
+                                    if result_callback:
+                                        for b in buffer:
+                                            result_callback(*b)
+                                    buffer.clear()
                                 if t1 - t0 > 1.0:
                                     print(f"[PROFILE] Slow scan: {full_path} took {t1-t0:.2f}s")
-                        # Update progress more frequently for better UI responsiveness
                         if progress_callback and files_scanned % 5 == 0:
-                            # Don't calculate progress here - let the main window handle it
-                            # Just pass the current file count for reference
                             progress_callback(None, None, {'files_scanned': files_scanned, 'threats_found': 0})
                     except Exception as e:
                         print(f"Error in batch scan: {e}")
+                # Flush any remaining buffered results
+                if buffer and result_callback:
+                    for b in buffer:
+                        result_callback(*b)
+                buffer.clear()
         except PermissionError:
             print(f"Permission denied accessing {directory}")
         except Exception as e:

@@ -123,57 +123,12 @@ pip install -r requirements.txt
    python main.py
    ```
 
-## 🔧 Configuration
-
-### API Keys Setup
-For enhanced protection, set up the following API keys as environment variables:
-
-```bash
-# VirusTotal API (for cloud threat intelligence)
-export VT_API_KEY="your_virustotal_api_key"
-
-# Have I Been Pwned API (for dark web monitoring)
-export HIBP_API_KEY="your_hibp_api_key"
-
-# Hybrid Analysis API (for advanced malware analysis)
-export HA_API_KEY="your_hybrid_analysis_api_key"
-```
-
-### Settings Configuration
-The application uses `ironwall_settings.json` for configuration. Key settings include:
-
-```json
-{
-  "protection": {
-    "real_time_protection": true,
-    "firewall_protection": true,
-    "heuristic_scanning": "Medium"
-  },
-  "scanning": {
-    "default_scan_type": "Quick",
-    "scan_compressed_files": true
-  },
-  "scheduling": {
-    "enable_scheduled_scans": true,
-    "scan_frequency": "Weekly"
-  }
-}
-```
-
 ## 🎯 Usage
 
 ### Basic Scanning
 1. **Quick Scan**: Fast scan of critical system areas
 2. **Full Scan**: Comprehensive system-wide scan
 3. **Custom Scan**: User-selected files and folders
-4. **Deep Scan**: Enhanced analysis with behavioral detection
-
-### Advanced Features
-1. **Behavior Analysis**: Monitor application behavior in real-time
-2. **Vulnerability Assessment**: Check system security posture
-3. **Parental Controls**: Manage child account restrictions
-4. **Dark Web Monitoring**: Track credential breaches
-5. **Network Protection**: Monitor and block malicious connections
 
 ### System Tray
 - Right-click tray icon for quick access
@@ -186,22 +141,6 @@ The application uses `ironwall_settings.json` for configuration. Key settings in
 ### Core Modules
 - **Scanner**: File and system scanning engine
 - **Process Monitor**: Real-time process monitoring
-- **Network Protection**: Firewall and network security
-- **Behavior Analyzer**: Application behavior analysis
-- **Vulnerability Scanner**: System security assessment
-- **Parental Controls**: Content filtering and time management
-- **Anti-Keylogger**: Keylogger detection and prevention
-- **Dark Web Monitor**: Breach monitoring and alerts
-- **System Tray**: System integration and notifications
-
-### UI Components
-- **Main Window**: Primary application interface
-- **Dashboard**: Real-time system status
-- **Scan Panel**: File scanning interface
-- **Quarantine Panel**: Threat management
-- **Settings Panel**: Configuration management
-- **Reports Panel**: Scan and threat reports
-- **Analytics Panel**: System performance metrics
 
 ## 🔒 Security Features
 

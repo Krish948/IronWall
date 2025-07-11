@@ -69,7 +69,6 @@ class SettingsPanel:
         self.create_quarantine_tab()
         self.create_privacy_tab()
         self.create_appearance_tab()
-        self.create_advanced_tab()
         
     def create_protection_tab(self):
         """Create Protection Settings tab"""
@@ -707,207 +706,6 @@ class SettingsPanel:
         """Check for updates"""
         messagebox.showinfo("Updates", "Checking for updates...\nThis feature will be implemented in future versions.")
     
-    def generate_diagnostic_report(self):
-        """Generate diagnostic report"""
-        try:
-            # Collect system information
-            report = {
-                "timestamp": datetime.now().isoformat(),
-                "system_info": {
-                    "platform": sys.platform,
-                    "python_version": sys.version,
-                    "ironwall_version": "1.0.0"
-                },
-                "settings": {},
-                "scan_history": {},
-                "quarantine": {},
-                "logs": {}
-            }
-            
-            # Get all settings
-            for category in ["protection", "scanning", "scheduling", "notifications", 
-                           "updates", "performance", "quarantine", "privacy", 
-                           "appearance", "advanced"]:
-                report["settings"][category] = self.settings_manager.get_all_settings(category)
-            
-            # Get scan history
-            try:
-                report["scan_history"] = scan_history.load_scan_history()
-            except:
-                report["scan_history"] = {"error": "Could not load scan history"}
-            
-            # Get quarantine info
-            try:
-                from utils.quarantine import QuarantineManager
-                qm = QuarantineManager()
-                report["quarantine"] = qm.get_quarantine_info()
-            except:
-                report["quarantine"] = {"error": "Could not load quarantine info"}
-            
-            # Get recent logs
-            try:
-                # from utils.logger import logger
-                report["logs"] = {}
-            except:
-                report["logs"] = {"error": "Could not load logs"}
-            
-            # Save report
-            filename = f"ironwall_diagnostic_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(report, f, indent=2, ensure_ascii=False)
-            
-            messagebox.showinfo("Diagnostic Report", 
-                              f"Diagnostic report generated successfully!\nSaved as: {filename}")
-            
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to generate diagnostic report: {e}")
-    
-    def restore_factory_defaults(self):
-        """Restore factory defaults"""
-        if messagebox.askyesno("Restore Factory Defaults", 
-                              "This will reset ALL settings to factory defaults.\nThis action cannot be undone.\n\nContinue?"):
-            try:
-                # Reset all settings to defaults
-                self.settings_manager.reset_all_settings()
-                
-                # Reset UI to defaults
-                self.reset_all_settings()
-                
-                messagebox.showinfo("Success", "All settings have been restored to factory defaults.")
-                
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to restore factory defaults: {e}")
-    
-    def reset_all_settings(self):
-        """Reset all settings to defaults"""
-        # Reset protection settings
-        self.reset_protection_settings()
-        
-        # Reset scanning settings
-        self.reset_scanning_settings()
-        
-        # Reset scheduling settings
-        if hasattr(self, 'scheduling_enable_var'):
-            self.scheduling_enable_var.set(False)
-        if hasattr(self, 'scan_frequency_var'):
-            self.scan_frequency_var.set("Daily")
-        if hasattr(self, 'scan_time_var'):
-            self.scan_time_var.set("02:00")
-        if hasattr(self, 'auto_delete_threats_var'):
-            self.auto_delete_threats_var.set(False)
-        
-        # Reset notification settings
-        if hasattr(self, 'threat_alerts_var'):
-            self.threat_alerts_var.set(True)
-        if hasattr(self, 'scan_results_summary_var'):
-            self.scan_results_summary_var.set(True)
-        if hasattr(self, 'silent_mode_var'):
-            self.silent_mode_var.set(False)
-        if hasattr(self, 'notification_sound_var'):
-            self.notification_sound_var.set(True)
-        
-        # Reset update settings
-        if hasattr(self, 'auto_update_definitions_var'):
-            self.auto_update_definitions_var.set(True)
-        if hasattr(self, 'auto_update_app_var'):
-            self.auto_update_app_var.set(True)
-        if hasattr(self, 'cloud_threat_detection_var'):
-            self.cloud_threat_detection_var.set(True)
-        
-        # Reset performance settings
-        if hasattr(self, 'cpu_limit_var'):
-            self.cpu_limit_var.set(50)
-        if hasattr(self, 'ram_optimization_var'):
-            self.ram_optimization_var.set(True)
-        if hasattr(self, 'background_scan_var'):
-            self.background_scan_var.set(True)
-        if hasattr(self, 'idle_scan_mode_var'):
-            self.idle_scan_mode_var.set(False)
-        if hasattr(self, 'battery_saver_mode_var'):
-            self.battery_saver_mode_var.set(False)
-        
-        # Reset quarantine settings
-        if hasattr(self, 'auto_delete_var'):
-            self.auto_delete_var.set(30)
-        if hasattr(self, 'quarantine_folder_var'):
-            self.quarantine_folder_var.set("quarantine")
-        if hasattr(self, 'max_size_var'):
-            self.max_size_var.set(1000)
-        if hasattr(self, 'enable_file_submission_var'):
-            self.enable_file_submission_var.set(False)
-        
-        # Reset privacy settings
-        if hasattr(self, 'data_sharing_var'):
-            self.data_sharing_var.set(False)
-        if hasattr(self, 'log_retention_var'):
-            self.log_retention_var.set(90)
-        if hasattr(self, 'auto_log_clearing_var'):
-            self.auto_log_clearing_var.set(True)
-        if hasattr(self, 'block_telemetry_var'):
-            self.block_telemetry_var.set(True)
-        
-        # Reset appearance settings
-        if hasattr(self, 'ttkbootstrap_theme_var'):
-            self.ttkbootstrap_theme_var.set("flatly")
-        if hasattr(self, 'high_contrast_var'):
-            self.high_contrast_var.set(False)
-        if hasattr(self, 'animations_var'):
-            self.animations_var.set(True)
-        if hasattr(self, 'font_size_var'):
-            self.font_size_var.set("normal")
-        if hasattr(self, 'language_var'):
-            self.language_var.set("en")
-        if hasattr(self, 'sync_system_var'):
-            self.sync_system_var.set(False)
-        
-        # Reset theme
-        if hasattr(self, 'theme_selector'):
-            self.theme_selector.set_selected_theme("Light")
-        if hasattr(self, 'use_custom_colors_var'):
-            self.use_custom_colors_var.set(False)
-        
-        # Reset advanced settings
-        if hasattr(self, 'admin_lock_var'):
-            self.admin_lock_var.set(False)
-        if hasattr(self, 'diagnostic_reporting_var'):
-            self.diagnostic_reporting_var.set(False)
-        if hasattr(self, 'debug_mode_var'):
-            self.debug_mode_var.set(False)
-        
-        # Clear exclusions
-        if hasattr(self, 'files_listbox'):
-            self.files_listbox.delete(0, tk.END)
-        if hasattr(self, 'folders_listbox'):
-            self.folders_listbox.delete(0, tk.END)
-        if hasattr(self, 'extensions_listbox'):
-            self.extensions_listbox.delete(0, tk.END)
-        
-        # Update preview
-        self.update_preview()
-    
-    def create_advanced_tab(self):
-        """Create Advanced & Backup tab"""
-        frame = ttk.Frame(self.notebook)
-        frame.pack(fill='both', expand=True)
-        self.notebook.add(frame, text="🧰 Advanced")
-        
-        # Advanced Options
-        self.create_section(frame, "Advanced Options", [
-            ("diagnostic_reporting", "Diagnostic Reporting", "advanced", "checkbox"),
-            ("debug_mode", "Debug Mode", "advanced", "checkbox"),
-        ])
-        
-        # Backup Actions
-        backup_frame = ttk.LabelFrame(frame, text="Backup & Restore", padding=10)
-        backup_frame.pack(fill=X, pady=10, padx=10)
-        
-        ttk.Button(backup_frame, text="📊 Generate Diagnostic Report", 
-                  command=self.generate_diagnostic_report).pack(fill=X, pady=2)
-        ttk.Button(backup_frame, text="🏭 Restore Factory Defaults", 
-                  style="warning.TButton", command=self.restore_factory_defaults).pack(fill=X, pady=2)
-        ttk.Button(backup_frame, text="🔄 Reset All Data", 
-                  style="danger.TButton", command=self.reset_all_data).pack(fill=X, pady=2)
-    
     def create_section(self, parent, title, settings_list):
         """Create a settings section with multiple controls"""
         section = ttk.LabelFrame(parent, text=title, padding=10)
@@ -1021,13 +819,6 @@ class SettingsPanel:
                 custom_colors[color_key] = picker.get_color()
             self.settings_manager.set_setting("appearance", "custom_colors", custom_colors)
     
-    def save_advanced_settings(self):
-        """Save advanced settings"""
-        self.settings_manager.set_setting("advanced", "diagnostic_reporting", 
-                                         self.diagnostic_reporting_var.get())
-        self.settings_manager.set_setting("advanced", "debug_mode", 
-                                         self.debug_mode_var.get())
-    
     def save_scheduling_settings(self):
         """Save scheduling settings"""
         if hasattr(self, 'enable_scheduled_scans_var'):
@@ -1131,7 +922,6 @@ class SettingsPanel:
             self.save_quarantine_settings()
             self.save_privacy_settings()
             self.save_appearance_settings()
-            self.save_advanced_settings()
             
             # Save exclusions if they exist
             if hasattr(self, 'files_listbox'):
