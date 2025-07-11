@@ -9,12 +9,12 @@ import threading
 import time
 from datetime import datetime, timedelta
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils.quarantine import QuarantineManager
 from ui.quarantine_panel import QuarantinePanel
 from ui.scheduler_panel import SchedulerPanel
 from ui.settings_panel import SettingsPanel
-from ui.advanced_panel import AdvancedFeaturesPanel
-import sys
 import webbrowser
 import version
 from ui.scan_panel import ScanPanel
@@ -23,8 +23,11 @@ from ui.reports_panel import ReportsPanel
 from utils.logger import logger, EventType, EventStatus
 import psutil
 import traceback
+from utils import scan_history
 
 class IronWallMainWindow:
+    _t_scrollbar_configured = False
+
     def __init__(self, scanner, system_monitor, threat_db):
         self.scanner = scanner
         self.system_monitor = system_monitor
@@ -247,14 +250,14 @@ class IronWallMainWindow:
         
         # Scrollbar styles - Add error handling to prevent duplicate element errors
         try:
-            # Only configure scrollbar if it hasn't been configured before
-            if not hasattr(self, '_scrollbar_configured'):
+            # Only configure scrollbar if it hasn't been configured before (class-level guard)
+            if not hasattr(IronWallMainWindow, '_t_scrollbar_configured'):
                 self.style.configure('TScrollbar',
                                    background=colors['sidebar'],
                                    troughcolor=colors['bg'],
                                    borderwidth=0,
                                    arrowcolor=colors['fg'])
-                self._scrollbar_configured = True
+                IronWallMainWindow._t_scrollbar_configured = True
         except Exception as e:
             print(f"Error configuring scrollbar styles: {e}")
         
@@ -330,7 +333,6 @@ class IronWallMainWindow:
             ('Analytics', self.show_analytics_panel),
             ('Reports', self.show_reports_panel),
             ('Scheduler', self.show_scheduler_panel),
-            ('Advanced Features', self.show_advanced_features),
             ('Settings', self.show_settings),
             ('About', self.show_about),
             ('Refresh UI', self.refresh_ui)
@@ -393,7 +395,35 @@ class IronWallMainWindow:
         
         return scrollable_frame
 
+    def _show_buffering(self):
+        if hasattr(self, '_buffering_overlay') and self._buffering_overlay:
+            return  # Already shown
+        self._buffering_overlay = tk.Toplevel(self.root)
+        self._buffering_overlay.overrideredirect(True)
+        self._buffering_overlay.attributes('-topmost', True)
+        self._buffering_overlay.geometry(f"{self.root.winfo_width()}x{self.root.winfo_height()}+{self.root.winfo_x()}+{self.root.winfo_y()}")
+        self._buffering_overlay.configure(bg='#000000')
+        self._buffering_overlay.attributes('-alpha', 0.35)
+        frame = ttk.Frame(self._buffering_overlay, style='Dashboard.TFrame')
+        frame.place(relx=0.5, rely=0.5, anchor='center')
+        spinner = ttk.Progressbar(frame, mode='indeterminate', length=120, style='TProgressbar')
+        spinner.pack(pady=16)
+        spinner.start(10)
+        label = ttk.Label(frame, text='Loading...', font=('Segoe UI', 16, 'bold'))
+        label.pack()
+        self._buffering_spinner = spinner
+        self._buffering_label = label
+        self._buffering_overlay.update()
+
+    def _hide_buffering(self):
+        if hasattr(self, '_buffering_overlay') and self._buffering_overlay:
+            self._buffering_overlay.destroy()
+            self._buffering_overlay = None
+            self._buffering_spinner = None
+            self._buffering_label = None
+
     def show_dashboard(self):
+        self._show_buffering()
         self._clear_page()
         self.header_status.config(text='Advanced Security Overview')
         
@@ -480,6 +510,7 @@ class IronWallMainWindow:
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
         # Start periodic refresh for real-time panels
         self._dashboard_refresh()
+        self._hide_buffering()
 
     def _create_security_status_panel(self, parent):
         # Real-time protection (stub: always ON)
@@ -669,7 +700,6 @@ class IronWallMainWindow:
 
     def _create_timeline_panel(self, parent):
         # Load recent scan history
-        from utils import scan_history
         history = scan_history.load_scan_history()
         # Sort by timestamp descending
         history = sorted(history, key=lambda x: x.get('timestamp', 0), reverse=True)[:10]
@@ -1107,7 +1137,7 @@ class IronWallMainWindow:
         self.scanner.stop_scan()
 
     def show_about(self):
-        """Display comprehensive About tab with real application details and system information"""
+        self._show_buffering()
         self._clear_page()
         self.header_status.config(text='About IronWall Antivirus')
         
@@ -1496,8 +1526,10 @@ class IronWallMainWindow:
         
         # Store canvas reference for cleanup
         self.about_canvas = canvas
+        self._hide_buffering()
 
     def show_settings(self):
+        self._show_buffering()
         self._clear_page()
         self.header_status.config(text='Settings')
         
@@ -1505,6 +1537,7 @@ class IronWallMainWindow:
         from ui.settings_panel import SettingsPanel
         self.settings_panel = SettingsPanel(self.page_frame, self)
         self.settings_panel.main_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        self._hide_buffering()
 
     def _toggle_quarantine_notifications(self):
         """Toggle quarantine notification setting"""
@@ -1540,13 +1573,15 @@ class IronWallMainWindow:
         self.show_storage_info()
 
     def show_quarantine(self):
+        self._show_buffering()
         self._clear_page()
         self.header_status.config(text='Quarantine Management')
         
         # Import and use the new QuarantinePanel directly in page_frame for maximum size
         from ui.quarantine_panel import QuarantinePanel
         self.quarantine_panel = QuarantinePanel(self.page_frame, self.quarantine_manager)
-        self.quarantine_panel.pack(fill='both', expand=True, padx=10, pady=10)
+        # self.quarantine_panel.pack(fill='both', expand=True, padx=10, pady=10)  # Removed, as QuarantinePanel is not a widget
+        self._hide_buffering()
 
     def start_monitoring(self):
         self.monitoring_active = True
@@ -1921,8 +1956,9 @@ class IronWallMainWindow:
             button.configure(style='TButton')
 
     def show_recent_activity(self):
+        self._show_buffering()
         self._clear_page()
-        self.header_status.config(text='Recent Activity & System Logs')
+        self.header_status.config(text='Recent Activity')
         
         # Main container directly in page_frame for maximum size
         main_frame = ttk.Frame(self.page_frame, style='Dashboard.TFrame')
@@ -1937,6 +1973,7 @@ class IronWallMainWindow:
         activity_panel = ttk.LabelFrame(main_frame, text='Detailed Activity Log', padding=16, style='DashboardPanel.TLabelframe')
         activity_panel.pack(fill='both', expand=True, padx=14, pady=12, ipadx=6, ipady=6)
         self._create_activity_table_panel(activity_panel)
+        self._hide_buffering()
 
     def _create_activity_summary_panel(self, parent):
         # Get activity statistics
@@ -2080,23 +2117,27 @@ class IronWallMainWindow:
         self.activity_tree.tag_configure('medium_severity', foreground=self.get_color('warn'))
 
     def show_analytics_panel(self):
+        self._show_buffering()
         self._clear_page()
-        self.header_status.config(text='Security Analytics & Insights')
+        self.header_status.config(text='Analytics')
         
         # Import and use the AnalyticsPanel directly in page_frame for maximum size
         from ui.analytics_panel import AnalyticsPanel
         self.analytics_panel = AnalyticsPanel(self.page_frame, self.system_monitor, self.threat_db)
         print('[DEBUG] Packing analytics panel...')
         self.analytics_panel.pack(fill='both', expand=True, padx=10, pady=10)
+        self._hide_buffering()
 
     def show_scheduler_panel(self):
+        self._show_buffering()
         self._clear_page()
-        self.header_status.config(text='Scan Scheduler & Automation')
+        self.header_status.config(text='Scheduler')
         
         # Import and use the SchedulerPanel directly in page_frame for maximum size
         from ui.scheduler_panel import SchedulerPanel
         self.scheduler_panel = SchedulerPanel(self.page_frame, scan_callback=self.start_folder_scan)
         self.scheduler_panel.pack(fill='both', expand=True, padx=10, pady=10)
+        self._hide_buffering()
 
     def show_logs_panel(self):
         self._clear_page()
@@ -2398,23 +2439,16 @@ class IronWallMainWindow:
         t.start() 
 
     def show_reports_panel(self):
+        self._show_buffering()
         self._clear_page()
-        self.header_status.config(text='Reports & Audit Logs')
+        self.header_status.config(text='Reports')
         
         # Import and use the ReportsPanel directly in page_frame for maximum size
         from ui.reports_panel import ReportsPanel
         self.reports_panel = ReportsPanel(self.page_frame, self.system_monitor, self.threat_db, self.quarantine_manager)
         self.reports_panel.pack(fill='both', expand=True, padx=10, pady=10)
-
-    def show_advanced_features(self):
-        self._clear_page()
-        self.header_status.config(text='Advanced Security Features')
+        self._hide_buffering()
         
-        # Import and use the AdvancedFeaturesPanel directly in page_frame for maximum size
-        from ui.advanced_panel import AdvancedFeaturesPanel
-        self.advanced_panel = AdvancedFeaturesPanel(self.page_frame, self.scanner, self.system_monitor, self.threat_db)
-        self.advanced_panel.pack(fill='both', expand=True, padx=10, pady=10)
-
     def apply_color_theme(self):
         """Apply color theme from settings"""
         try:
@@ -2528,8 +2562,10 @@ class IronWallMainWindow:
         self.style.configure('TNotebook.Tab', background=c['sidebar'], foreground=c['fg'], padding=[10, 5], font=('Segoe UI', 11))
         self.style.map('TNotebook.Tab', background=[('selected', c['accent']), ('active', c['hover'])], foreground=[('selected', c['bg']), ('active', c['accent'])])
         # Scrollbar styles
-        self.style.configure('TScrollbar', background=c['sidebar'], troughcolor=c['bg'], borderwidth=0, arrowcolor=c['fg'])
-        self.style.map('TScrollbar', background=[('active', c['hover']), ('pressed', c['accent'])])
+        if not hasattr(IronWallMainWindow, '_t_scrollbar_configured'):
+            self.style.configure('TScrollbar', background=c['sidebar'], troughcolor=c['bg'], borderwidth=0, arrowcolor=c['fg'])
+            self.style.map('TScrollbar', background=[('active', c['hover']), ('pressed', c['accent'])])
+            IronWallMainWindow._t_scrollbar_configured = True
         # Checkbutton styles
         self.style.configure('TCheckbutton', background=c['bg'], foreground=c['fg'], font=('Segoe UI', 11))
         # Radiobutton styles

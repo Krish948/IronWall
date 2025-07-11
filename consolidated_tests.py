@@ -16,6 +16,7 @@ import subprocess
 import platform
 from datetime import datetime
 from pathlib import Path
+from utils import scan_history
 
 # Add the IronWall/Krish directory to Python path
 krish_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "IronWall", "Krish")
