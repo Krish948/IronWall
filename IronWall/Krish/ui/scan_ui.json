@@ -1,0 +1,35 @@
+{
+  "type": "Page",
+  "title": "Scan for threats",
+  "children": [
+    {
+      "type": "Frame",
+      "title": "Scan Summary",
+      "children": [
+        { "type": "Label", "text": "Total Files: 0", "style": "bold" },
+        { "type": "Label", "text": "Files Scanned: 0", "style": "bold" },
+        { "type": "Label", "text": "Threats Found: 0", "style": "bold", "color": "danger" },
+        { "type": "Label", "text": "Current File: Scanning...", "style": "italic" },
+        { "type": "Button", "text": "Quick Scan", "style": "accent", "action": "start_folder_scan" },
+        { "type": "Button", "text": "Stop", "style": "accent", "action": "stop_scan" },
+        { "type": "Button", "text": "⏸️ Pause", "style": "accent", "action": "pause_scan" },
+        { "type": "Button", "text": "▶️ Resume", "style": "accent", "action": "resume_scan" },
+        { "type": "Button", "text": "Deep Scan: OFF", "style": "accent", "action": "toggle_deep_scan" },
+        { "type": "ProgressBar", "value": 0, "max": 100 }
+      ]
+    },
+    {
+      "type": "Frame",
+      "title": "Scan Results",
+      "children": [
+        {
+          "type": "Table",
+          "columns": [
+            "File Name", "Full Path", "File Size", "File Type", "Threat Type", "Status"
+          ],
+          "rows": []
+        }
+      ]
+    }
+  ]
+} 
