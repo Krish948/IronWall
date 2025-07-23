@@ -3,9 +3,18 @@
 ---
 
 ## Table of Contents
-1. [IronWall Antivirus - Main README](#ironwall-antivirus---main-readme)
-2. [Data Reset Feature](#data-reset-feature)
-3. [Test Files Merge Summary](#test-files-merge-summary)
+1. [Main Features](#-key-features)
+2. [Requirements](#-requirements)
+3. [Installation](#-installation)
+4. [Configuration](#-configuration)
+5. [Usage](#-usage)
+6. [Architecture](#-architecture)
+7. [Security Features](#-security-features)
+8. [Monitoring & Reporting](#-monitoring--reporting)
+9. [Development](#-development)
+10. [Support](#-support)
+11. [Disclaimer](#-disclaimer)
+12. [Version History](#-version-history)
 
 ---
 
