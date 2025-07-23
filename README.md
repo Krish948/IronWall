@@ -159,34 +159,56 @@ IronWall/
 └── logs/                     # Application logs
 ```
 
-## 🤝 Support
+## 🧪 Testing
 
-- Issues: [GitHub Issues](https://github.com/krish948/IronWall/issues)
+To run tests (if available):
+```bash
+pytest
+```
+Or use your preferred test runner. Please ensure all tests pass before submitting a pull request.
 
-## ⚠️ Disclaimer
+---
 
-This software is provided for educational and research purposes. Use at your own risk. The developers are not responsible for any damage or data loss that may occur from using this software.
+## 🤝 Contributing
 
-## 🔄 Version History
+Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started. You can:
+- Fork the repository
+- Create a new branch for your feature or bugfix
+- Submit a pull request with a clear description
+- Open issues for bugs or feature requests
 
-### v2.0.0 (Current)
-- ✨ Added Behavior Analyzer module
-- ✨ Added Vulnerability Scanner
-- ✨ Added Parental Controls
-- ✨ Added Anti-Keylogger protection
-- ✨ Added Dark Web Monitor
-- ✨ Added System Tray integration
-- ✨ Enhanced UI with modern themes
-- ✨ Improved threat detection algorithms
-- ✨ Added cloud threat intelligence
-- ✨ Enhanced network protection
+---
 
-### v1.0.0
-- 🎉 Initial release
-- Basic antivirus functionality
-- File scanning capabilities
-- Quarantine management
-- Simple UI interface
+## 📄 License
+
+This project is licensed under the MIT License.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+See the [LICENSE](LICENSE) file for the full license text.
+
+---
+
+## 📬 Contact
+
+For questions, suggestions, or support, please contact the maintainer:
+- GitHub: [krish948](https://github.com/krish948)
+
+---
+
+## 📑 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes and version history.
+
+---
+
+## 🔒 Privacy & Data Collection
+
+IronWall Antivirus does **not** collect or transmit any personal data. All scan results and logs are stored locally on your device. For more details, see our [Privacy Policy](PRIVACY.md) _(add this file if needed)_.
 
 ---
 
