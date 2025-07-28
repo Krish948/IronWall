@@ -63,7 +63,7 @@ pip install -r requirements.txt
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/IronWall.git
+   git clone https://github.com/Krish948/IronWall.git
    cd IronWall/Krish
    ```
 
